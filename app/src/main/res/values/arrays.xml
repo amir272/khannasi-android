@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="states">
+        <item>Other</item>
+        <item>Andaman and Nicobar Islands</item>
+        <item>Andhra Pradesh</item>
+        <item>Arunachal Pradesh</item>
+        <item>Assam</item>
+        <item>Bihar</item>
+        <item>Chandigarh</item>
+        <item>Chhattisgarh</item>
+        <item>Dadra and Nagar Haveli</item>
+        <item>Daman and Diu</item>
+        <item>Delhi</item>
+        <item>Goa</item>
+        <item>Gujarat</item>
+        <item>Haryana</item>
+        <item>Himachal Pradesh</item>
+        <item>Jammu Kashmir and Ladakh</item>
+        <item>Jharkhand</item>
+        <item>Karnataka</item>
+        <item>Kerala</item>
+        <item>Madhya Pradesh</item>
+        <item>Maharashtra</item>
+        <item>Manipur</item>
+        <item>Meghalaya</item>
+        <item>Mizoram</item>
+        <item>Nagaland</item>
+        <item>Odisha</item>
+        <item>Pondicherry</item>
+        <item>Punjab</item>
+        <item>Rajasthan</item>
+        <item>Sikkim</item>
+        <item>Tamil Nadu</item>
+        <item>Telangana</item>
+        <item>Tripura</item>
+        <item>Uttar Pradesh</item>
+        <item>West Bengal</item>
+    </string-array>
+
+    <string-array name="countries">
+        <item>India</item>
+        <item>United States</item>
+        <item>United Kingdom</item>
+        <item>Canada</item>
+        <item>Australia</item>
+        <item>France</item>
+        <item>Germany</item>
+        <item>Italy</item>
+        <item>Japan</item>
+        <item>South Korea</item>
+        <item>China</item>
+        <item>Russia</item>
+        <item>Brazil</item>
+        <item>South Africa</item>
+        <item>Argentina</item>
+        <item>Spain</item>
+        <item>Mexico</item>
+        <item>Indonesia</item>
+        <item>Philippines</item>
+        <item>Thailand</item>
+        <item>Vietnam</item>
+        <item>Myanmar</item>
+        <item>Malaysia</item>
+        <item>Iran</item>
+        <item>Iraq</item>
+        <item>Saudi Arabia</item>
+        <item>United Arab Emirates</item>
+        <item>Qatar</item>
+        <item>Oman</item>
+        <item>Yemen</item>
+        <item>New Zealand</item>
+        <item>Switzerland</item>
+        <item>Sweden</item>
+        <item>Denmark</item>
+        <item>Norway</item>
+        <item>Finland</item>
+        <item>Poland</item>
+        <item>Ukraine</item>
+        <item>Belarus</item>
+        <item>Latvia</item>
+        <item>Lithuania</item>
+        <item>Estonia</item>
+        <item>Portugal</item>
+        <item>Italy</item>
+        <item>Greece</item>
+        <item>Turkey</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="categories">
+        <item>General</item>
+        <item>Tragedy</item>
+        <item>Comedy</item>
+        <item>History</item>
+        <item>Politics</item>
+        <item>Breaking</item>
+        <item>Technology</item>
+        <item>Science</item>
+        <item>Health</item>
+        <item>Business</item>
+        <item>Entertainment</item>
+        <item>Sports</item>
+        <item>Education</item>
+        <item>Travel</item>
+        <item>Jobs</item>
+        <item>Food</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="tragedy">
+        <item>Accident</item>
+        <item>Crime</item>
+        <item>Disaster</item>
+        <item>War</item>
+        <item>Horror</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="comedy">
+        <item>Stand-up</item>
+        <item>Sketch</item>
+        <item>Improv</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="general">
+        <item>World</item>
+        <item>Country</item>
+        <item>State</item>
+        <item>City</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="technology">
+        <item>AI</item>
+        <item>IoT</item>
+        <item>Blockchain</item>
+        <item>Mobile Phone</item>
+        <item>Computer</item>
+        <item>Apple</item>
+        <item>Google</item>
+        <item>Microsoft</item>
+        <item>Meta</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="science">
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Biology</item>
+        <item>Mathematics</item>
+        <item>Computer Science</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="health">
+        <item>Physical</item>
+        <item>Mental</item>
+        <item>Adult</item>
+        <item>Young</item>
+        <item>Cancer</item>
+        <item>Blood Pressure</item>
+        <item>Diabetes</item>
+        <item>Skin</item>
+        <item>Blood</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="business">
+        <item>Stock Market</item>
+        <item>Real Estate</item>
+        <item>Banking</item>
+        <item>Insurance</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="entertainment">
+        <item>Movie</item>
+        <item>TV Show</item>
+        <item>Music</item>
+        <item>Book</item>
+        <item>Game</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="sports">
+        <item>Cricket</item>
+        <item>Football</item>
+        <item>Tennis</item>
+        <item>Badminton</item>
+        <item>Martial Arts</item>
+        <item>Athletic</item>
+        <item>Swimming</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="education">
+        <item>Primary</item>
+        <item>Middle</item>
+        <item>High School</item>
+        <item>Undergraduate</item>
+        <item>Postgraduate</item>
+        <item>PhD</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="travel">
+        <item>Domestic</item>
+        <item>International</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="jobs">
+        <item>Government</item>
+        <item>Private</item>
+        <item>Local</item>
+        <item>NGO</item>
+        <item>IT/Technology</item>
+        <item>Medicine</item>
+        <item>Engineering</item>
+        <item>Teaching</item>
+        <item>Remote</item>
+        <item>Hybrid</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="food">
+        <item>Vegetarian</item>
+        <item>Non-vegetarian</item>
+        <item>Vegan</item>
+        <item>Gluten-free</item>
+        <item>Diabetic</item>
+        <item>Other</item>
+    </string-array>
+</resources>

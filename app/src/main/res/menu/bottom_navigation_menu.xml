@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/navigation_home"
+            android:icon="@drawable/baseline_house_24"
+            android:title="@string/home" />
+    <item
+            android:id="@+id/navigation_discussion"
+            android:icon="@drawable/baseline_speaker_notes_24"
+            android:title="@string/discussions" />
+    <item
+            android:id="@+id/navigation_account"
+            android:icon="@drawable/baseline_account_circle_24"
+            android:title="@string/account" />
+    <item
+            android:id="@+id/navigation_test"
+            android:icon="@drawable/baseline_account_circle_24"
+            android:title="@string/test" />
+</menu>

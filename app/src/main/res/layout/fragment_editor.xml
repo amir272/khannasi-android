@@ -1,0 +1,153 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:layout_gravity="center"
+                android:hint="@string/title"
+        />
+
+    <jp.wasabeef.richeditor.RichEditor
+            android:id="@+id/editor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <HorizontalScrollView
+            android:id="@+id/editingOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black">
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <ImageButton
+                    android:id="@+id/action_bold"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/baseline_format_bold_24" />
+
+            <ImageButton
+                    android:id="@+id/action_italic"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/baseline_format_italic_24" />
+
+            <ImageButton
+                    android:id="@+id/action_underline"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/baseline_format_underlined_24" />
+
+
+            <ImageButton
+                    android:id="@+id/action_insert_bullets"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/format_list_bulleted_24px" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <ImageButton
+            android:id="@+id/action_add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/image_24px"
+            android:contentDescription="@null" />
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/html_preview"
+                android:textSize="12sp" />
+
+        <TextView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp" />
+        <ImageView
+                android:id="@+id/previewImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/description"/>
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:layout_gravity="center"
+                app:startIconDrawable= "@drawable/baseline_holiday_village_24"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            <AutoCompleteTextView
+                    android:id="@+id/category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    app:simpleItems="@array/categories"
+                    android:hint="@string/category" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="360dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:layout_gravity="center"
+                app:startIconDrawable= "@drawable/apartment_24px"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            <com.manipur.khannasi.util.MultiSelectAutoCompleteTextView
+                    android:id="@+id/sub_categories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/sub_categories"
+                    android:inputType="none"
+                    android:required="true"
+            />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+    <Button
+            android:id="@+id/post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/post"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+</LinearLayout>
+</ScrollView>
