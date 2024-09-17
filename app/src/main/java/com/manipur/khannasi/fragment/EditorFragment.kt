@@ -15,7 +15,6 @@ import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.Toast
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -26,12 +25,11 @@ import com.manipur.khannasi.R
 import com.manipur.khannasi.dto.Article
 import com.manipur.khannasi.dto.UserBasics
 import com.manipur.khannasi.dto.UserDetails
-import com.manipur.khannasi.misc.DisplayImage
-import com.manipur.khannasi.misc.FtpClientUpload
 import com.manipur.khannasi.misc.RetrieveDetailsFromSharedPreferences
 import com.manipur.khannasi.misc.SaveImageToLocal.Companion.saveImageToLocal
 import com.manipur.khannasi.misc.SharedViewModel
 import com.manipur.khannasi.repository.ArticleRepository
+import com.manipur.khannasi.repository.ImageUploader.uploadImageToServer
 import com.manipur.khannasi.retrofit.RetrofitClient
 import com.manipur.khannasi.util.MultiSelectAutoCompleteTextView
 import id.zelory.compressor.Compressor
@@ -40,6 +38,7 @@ import id.zelory.compressor.constraint.quality
 import id.zelory.compressor.constraint.resolution
 import id.zelory.compressor.constraint.size
 import jp.wasabeef.richeditor.RichEditor
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -48,20 +47,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
-import java.io.InputStream
 
 class EditorFragment : Fragment() {
 
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var mEditor: RichEditor
-    private lateinit var mPreview: TextView
-    private lateinit var editingOptions: HorizontalScrollView
     private lateinit var actionBold: View
     private lateinit var actionItalic: View
     private lateinit var actionUnderline: View
     private lateinit var actionInsertBullets: View
     private lateinit var actionAddImage: ImageButton
-    private lateinit var previewImage: ImageView
+    private lateinit var savedImagePathTextView: TextView
     private lateinit var titleInput: TextInputEditText
     private lateinit var categoryInput: AutoCompleteTextView
     private lateinit var subCategoryInput: MultiSelectAutoCompleteTextView
@@ -71,7 +67,6 @@ class EditorFragment : Fragment() {
     private var isActionItalic = false
     private var isActionUnderline = false
     private var isActionInsertBullets = false
-    private var isEditingOptionsVisible = false
     private var imagePath: String? = null
 
     companion object {
@@ -89,13 +84,12 @@ class EditorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
 
-        editingOptions = view.findViewById(R.id.editingOptions)
         actionBold = view.findViewById(R.id.action_bold)
         actionItalic = view.findViewById(R.id.action_italic)
         actionUnderline = view.findViewById(R.id.action_underline)
         actionInsertBullets = view.findViewById(R.id.action_insert_bullets)
         actionAddImage = view.findViewById(R.id.action_add_image)
-        previewImage = view.findViewById(R.id.previewImage)
+        savedImagePathTextView = view.findViewById(R.id.imageSavedPath)
         titleInput = view.findViewById(R.id.title)
         categoryInput = view.findViewById(R.id.category)
         subCategoryInput = view.findViewById(R.id.sub_categories)
@@ -110,15 +104,6 @@ class EditorFragment : Fragment() {
         mEditor.setEditorFontColor(1)
         mEditor.setPlaceholder("Insert text here...")
         mEditor.setPadding(10, 10, 10, 10)
-
-        mPreview = view.findViewById(R.id.preview)
-        mEditor.setOnTextChangeListener { text ->
-            if (!isEditingOptionsVisible) {
-                editingOptions.visibility = View.VISIBLE
-                isEditingOptionsVisible = true
-            }
-            mPreview.text = text
-        }
 
         actionBold.setOnClickListener {
             isActionBold = !isActionBold
@@ -225,51 +210,28 @@ class EditorFragment : Fragment() {
                 val actualImageFile = File(imagePath)
 
                 lifecycleScope.launch {
-                    val compressedImageFile = context?.let { it1 -> Compressor.compress(it1, actualImageFile) {
-                        quality(20)
-                        format(Bitmap.CompressFormat.WEBP)
-                        resolution(560, 320)
-                        size(1_00)
-                    } }!!
-//                    val imageInputStream: InputStream = compressedImageFile.inputStream()
-//                    FtpClientUpload.uploadFile("test.webp", imageInputStream)
-                    // Update the imagePath to the compressed image path
+                    val compressedImageFile = context?.let { it1 ->
+                        Compressor.compress(it1, actualImageFile) {
+                            quality(30)
+                            format(Bitmap.CompressFormat.WEBP)
+                            resolution(560, 320)
+                            size(1_00)
+                        }
+                    }!!
                     imagePath = compressedImageFile.absolutePath
 
-                    // Display the image address
-                    mPreview.text = "Image saved at: $imagePath"
                     if (imagePath != null) {
-                        uploadImageToServer(imagePath!!)
+                        uploadImageToServer(imagePath!!) { savedImagePath ->
+                            Log.d("EditorFragment", "onActivityResult: $savedImagePath")
+                            savedImagePath?.let {
+                                savedImagePathTextView.text = "Image uploaded successfully"
+                                imagePathForServer = savedImagePath
+                            }
+                        }
                     }
-            }
-                previewImage.setImageDrawable(imagePath?.let { path ->
-                    DisplayImage.getDrawableFromPath(requireContext(), path)
-                })
-            }
-        }
-    }
-
-    private fun uploadImageToServer(imagePath: String) {
-        val file = File(imagePath)
-        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file)
-        val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
-
-        val call = RetrofitClient.instance.uploadImage(body)
-        call.enqueue(object : Callback<Map<String, Any>> {
-            override fun onResponse(call: Call<Map<String, Any>>, response: Response<Map<String, Any>>) {
-                if (response.isSuccessful) {
-                    val mapResponse = response.body()
-                    imagePathForServer = mapResponse?.get("location").toString()
-                    Log.d("EditorFragment", "Response: ${mapResponse?.get("location")}")
-                } else {
-                    Log.e("EditorFragment", "Error: ${response.errorBody()}")
                 }
             }
-
-            override fun onFailure(call: Call<Map<String, Any>>, t: Throwable) {
-                Log.e("EditorFragment", "Failure: ${t.message}")
-            }
-        })
+        }
     }
 
     private fun setBackGround(view: View, isAction: Boolean) {
