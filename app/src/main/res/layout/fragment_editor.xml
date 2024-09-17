@@ -13,6 +13,8 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/background_border"
                 android:layout_gravity="center"
                 android:hint="@string/title"
         />
@@ -20,7 +22,8 @@
     <jp.wasabeef.richeditor.RichEditor
             android:id="@+id/editor"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_border"/>
     <HorizontalScrollView
             android:id="@+id/editingOptions"
             android:layout_width="match_parent"
@@ -87,22 +90,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
         <TextView
+                android:id="@+id/imageSavedPath"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="@string/html_preview"
                 android:textSize="12sp" />
-
-        <TextView
-                android:id="@+id/preview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp" />
-        <ImageView
-                android:id="@+id/previewImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/description"/>
     </LinearLayout>
 
 
