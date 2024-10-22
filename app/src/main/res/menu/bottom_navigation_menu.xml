@@ -4,15 +4,19 @@
             android:icon="@drawable/baseline_house_24"
             android:title="@string/home" />
     <item
-            android:id="@+id/navigation_discussion"
-            android:icon="@drawable/baseline_speaker_notes_24"
+            android:id="@+id/discussion_feed"
+            android:icon="@drawable/groups_3_24px"
             android:title="@string/discussions" />
     <item
-            android:id="@+id/navigation_account"
-            android:icon="@drawable/baseline_account_circle_24"
-            android:title="@string/account" />
+            android:id="@+id/navigation_discussion"
+            android:icon="@drawable/post_add_24px"
+            android:title="@string/discussions" />
     <item
             android:id="@+id/navigation_test"
-            android:icon="@drawable/baseline_account_circle_24"
+            android:icon="@drawable/stylus_note_24px"
             android:title="@string/test" />
+    <item
+            android:id="@+id/navigation_account"
+            android:icon="@drawable/account_circle_24px"
+            android:title="@string/account" />
 </menu>

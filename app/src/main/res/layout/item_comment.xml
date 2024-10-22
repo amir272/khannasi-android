@@ -1,0 +1,102 @@
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:id="@+id/comment_container">
+
+    <TextView
+            android:id="@+id/comment_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+    <TextView
+            android:id="@+id/comment_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black"/>
+
+    <LinearLayout
+            android:id="@+id/like_view_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="start">
+
+        <ImageButton
+                android:id="@+id/like_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/description"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:scaleType="centerCrop"
+                android:background="@android:color/transparent"
+                android:src="@drawable/baseline_keyboard_double_arrow_up_24"/>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/like_count"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:paddingEnd="12dp"
+                android:paddingStart="0dp"
+                android:text="0"/>
+
+        <ImageButton
+                android:id="@+id/dislike_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp"
+                android:scaleType="centerCrop"
+                android:background="@android:color/transparent"
+                android:src="@drawable/baseline_keyboard_double_arrow_down_24"/>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dislike_count"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:paddingEnd="0dp"
+                android:paddingStart="4dp"
+                android:text="0"/>
+
+        <Button
+                android:id="@+id/replyIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textAppearance="?attr/textAppearanceOverline"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:text="@string/reply"/>
+    </LinearLayout>
+
+    <Button
+            android:id="@+id/btn_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:visibility="gone"
+            android:textAppearance="?attr/textAppearanceCaption"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            tools:text="Show replies"/>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ll_replies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="0dp"
+            android:visibility="gone"/>
+</LinearLayout>

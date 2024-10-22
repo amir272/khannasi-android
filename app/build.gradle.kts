@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -39,28 +40,31 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx.v1131)
     implementation(libs.androidx.appcompat.v170)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.okhttp)
-    implementation (libs.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
     implementation(libs.material.v1120)
     implementation(libs.androidx.material3)
     implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
     implementation(libs.androidx.material3.adaptive.navigation.suite)
     implementation(libs.androidx.core.splashscreen)
-    implementation (libs.poi.ooxml)
-    implementation (libs.richeditor.android)
-    implementation (libs.jackson.databind)
-    implementation (libs.jackson.annotations)
-    implementation (libs.picasso)
-    implementation (libs.compressor)
-    implementation (libs.commons.net)
+    implementation(libs.poi.ooxml)
+    implementation(libs.richeditor.android)
+    implementation(libs.jackson.databind)
+    implementation(libs.jackson.annotations)
+    implementation(libs.picasso)
+    implementation(libs.compressor)
+    implementation(libs.commons.net)
+    implementation(libs.androidx.room.runtime)
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit.v121)
     androidTestImplementation(libs.androidx.espresso.core.v361)
     implementation(libs.volley)
-    implementation (libs.glide)
-    annotationProcessor (libs.compiler)
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
 }

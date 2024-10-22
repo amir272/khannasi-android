@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/editor_layout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:background="@drawable/background_upper_corner_border">
+
+    <HorizontalScrollView
+            android:id="@+id/editingOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/black_bg_upper_corner">
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <ImageButton
+                    android:id="@+id/action_bold"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/baseline_format_bold_24"/>
+
+            <ImageButton
+                    android:id="@+id/action_italic"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/baseline_format_italic_24"/>
+
+            <ImageButton
+                    android:id="@+id/action_underline"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/baseline_format_underlined_24"/>
+
+            <ImageButton
+                    android:id="@+id/action_insert_bullets"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@null"
+                    android:contentDescription="@null"
+                    android:scaleType="center"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/format_list_bulleted_24px"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <jp.wasabeef.richeditor.RichEditor
+            android:id="@+id/editor"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"/>
+
+
+    <LinearLayout
+            style="?android:attr/buttonBarStyle" android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="end">
+
+        <Button
+                android:id="@+id/post_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/post"
+                android:layout_marginEnd="8dp"/>
+
+        <Button
+                android:id="@+id/cancel_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"/>
+    </LinearLayout>
+</LinearLayout>
