@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.manipur.khannasi.R
@@ -31,11 +32,13 @@ import com.manipur.khannasi.roomrepo.ArticleVoteRepo
 import com.manipur.khannasi.service.PostArticleVoteService
 import com.manipur.khannasi.util.BackFunction.Companion.onBackButtonClicked
 import com.manipur.khannasi.util.LoadingSpinner
+import com.manipur.khannasi.util.RetryHelper
 import com.manipur.khannasi.util.SharedPreferencesRetriever
 import com.manipur.khannasi.util.SharedViewModel
 import com.manipur.khannasi.util.SpannedHtmlString.Companion.fromHtml
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 class FragmentFullContentArticle : Fragment(), EditorVisibilityCallback, PostArticleWithEditor {
 
@@ -86,23 +89,52 @@ class FragmentFullContentArticle : Fragment(), EditorVisibilityCallback, PostArt
         commentsRecyclerView.layoutManager = LinearLayoutManager(context)
 
         val articleCommentRepository = ArticleCommentRepository()
-        articleCommentRepository.getCommentsByArticleId(articleIdFromItem) { comments ->
-            if (comments != null) {
-                sharedViewModel.retrievedArticleComments.value = comments
-                currentArticleCommentsList = comments
-                Log.d("ArticleComments", currentArticleCommentsList.toString())
-                commentsAdapter = ArticleCommentAdapter(requireContext(), userBasics, comments, onReplyClick = { comment ->
+        val retryHelper = RetryHelper(
+            maxRetries = 3,
+            initialDelay = 1000L,
+            maxDelay = 3000L,
+            factor = 2.0
+        )
+
+
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            val commentsToDisplay = retryHelper.retry {
+                suspendCancellableCoroutine { continuation ->
+                    articleCommentRepository.getCommentsByArticleId(articleIdFromItem) { comments ->
+                        if (comments != null) {
+                            continuation.resume(comments, null)
+                        } else {
+                            continuation.resume(null, null)
+                        }
+                    }
+                }
+            } ?: emptyList()
+            sharedViewModel.retrievedArticleComments.value = commentsToDisplay
+            currentArticleCommentsList = commentsToDisplay
+            Log.d("ArticleComments", currentArticleCommentsList.toString())
+            commentsAdapter =
+                ArticleCommentAdapter(requireContext(), userBasics, commentsToDisplay, onReplyClick = { comment ->
                     showEditor(comment.commentId)
                 }, onLikeClick = { articleIdToUpdate, commentId, liked ->
                     Log.d("ArticleFeedFragment", "Liking article $commentId")
                     run {
                         if (liked) {
                             PostArticleVoteService.postArticleVote(
-                                articleIdToUpdate, commentId, LIKE, userBasics, articleVoteRepo, this
+                                articleIdToUpdate,
+                                commentId,
+                                LIKE,
+                                userBasics,
+                                articleVoteRepo,
+                                this@FragmentFullContentArticle
                             )
                         } else {
                             PostArticleVoteService.postArticleVote(
-                                articleIdToUpdate, commentId, NONE, userBasics, articleVoteRepo, this
+                                articleIdToUpdate,
+                                commentId,
+                                NONE,
+                                userBasics,
+                                articleVoteRepo,
+                                this@FragmentFullContentArticle
                             )
                         }
                     }
@@ -112,21 +144,29 @@ class FragmentFullContentArticle : Fragment(), EditorVisibilityCallback, PostArt
                         if (disliked) {
                             Log.d("ArticleFeedFragment", "Disliking article")
                             PostArticleVoteService.postArticleVote(
-                                articleIdToUpdate, commentId, DISLIKE, userBasics, articleVoteRepo, this
+                                articleIdToUpdate,
+                                commentId,
+                                DISLIKE,
+                                userBasics,
+                                articleVoteRepo,
+                                this@FragmentFullContentArticle
                             )
                         } else {
                             PostArticleVoteService.postArticleVote(
-                                articleIdToUpdate, commentId, NONE, userBasics, articleVoteRepo, this
+                                articleIdToUpdate,
+                                commentId,
+                                NONE,
+                                userBasics,
+                                articleVoteRepo,
+                                this@FragmentFullContentArticle
                             )
                         }
                     }
                     true
                 }, CoroutineScope(Dispatchers.Main)
                 )
-                commentsRecyclerView.adapter = commentsAdapter
-
-            }
-            Log.d("ArticleFeedFragment", "Comments: $comments")
+            commentsRecyclerView.adapter = commentsAdapter
+            Log.d("ArticleFeedFragment", "Comments: $commentsToDisplay")
         }
         addCommentButton = view.findViewById(R.id.add_comment_button)
         commentButtons = view.findViewById(R.id.comment_buttons)
@@ -192,37 +232,43 @@ class FragmentFullContentArticle : Fragment(), EditorVisibilityCallback, PostArt
 
                 // Refresh the adapter with the new list of comments
                 commentsAdapter =
-                    ArticleCommentAdapter(requireContext(), userBasics, currentArticleCommentsList, onReplyClick = { comment ->
-                        showEditor(comment.commentId)
-                    }, onLikeClick = { articleIdToUpdate, commentId, liked ->
-                        run {
-                            if (liked) {
-                                Log.d("ArticleFeedFragment", "Liking article")
-                                PostArticleVoteService.postArticleVote(
-                                    articleIdToUpdate, commentId, LIKE, userBasics, articleVoteRepo, this
-                                )
-                            } else {
-                                PostArticleVoteService.postArticleVote(
-                                    articleIdToUpdate, commentId, NONE, userBasics, articleVoteRepo, this
-                                )
+                    ArticleCommentAdapter(requireContext(),
+                        userBasics,
+                        currentArticleCommentsList,
+                        onReplyClick = { comment ->
+                            showEditor(comment.commentId)
+                        },
+                        onLikeClick = { articleIdToUpdate, commentId, liked ->
+                            run {
+                                if (liked) {
+                                    Log.d("ArticleFeedFragment", "Liking article")
+                                    PostArticleVoteService.postArticleVote(
+                                        articleIdToUpdate, commentId, LIKE, userBasics, articleVoteRepo, this
+                                    )
+                                } else {
+                                    PostArticleVoteService.postArticleVote(
+                                        articleIdToUpdate, commentId, NONE, userBasics, articleVoteRepo, this
+                                    )
+                                }
                             }
-                        }
-                        true
-                    }, onDislikeClick = { articleIdToUpdate, commentId, disliked ->
-                        run {
-                            if (disliked) {
-                                Log.d("ArticleFeedFragment", "Disliking article")
-                                PostArticleVoteService.postArticleVote(
-                                    articleIdToUpdate, commentId, DISLIKE, userBasics, articleVoteRepo, this
-                                )
-                            } else {
-                                PostArticleVoteService.postArticleVote(
-                                    articleIdToUpdate, commentId, NONE, userBasics, articleVoteRepo, this
-                                )
+                            true
+                        },
+                        onDislikeClick = { articleIdToUpdate, commentId, disliked ->
+                            run {
+                                if (disliked) {
+                                    Log.d("ArticleFeedFragment", "Disliking article")
+                                    PostArticleVoteService.postArticleVote(
+                                        articleIdToUpdate, commentId, DISLIKE, userBasics, articleVoteRepo, this
+                                    )
+                                } else {
+                                    PostArticleVoteService.postArticleVote(
+                                        articleIdToUpdate, commentId, NONE, userBasics, articleVoteRepo, this
+                                    )
+                                }
                             }
-                        }
-                        true
-                    }, CoroutineScope(Dispatchers.Main)
+                            true
+                        },
+                        CoroutineScope(Dispatchers.Main)
                     )
                 commentsRecyclerView.adapter = commentsAdapter
             }

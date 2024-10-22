@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.manipur.khannasi.R
@@ -25,17 +26,21 @@ import com.manipur.khannasi.dto.UserBasics
 import com.manipur.khannasi.dto.UserDetails
 import com.manipur.khannasi.interfaces.EditorVisibilityCallback
 import com.manipur.khannasi.interfaces.PostDiscussionWithEditor
+import com.manipur.khannasi.repository.ArticleCommentRepository
 import com.manipur.khannasi.repository.DiscussionCommentRepository
 import com.manipur.khannasi.roomdb.DatabaseProvider
 import com.manipur.khannasi.roomrepo.DiscussionVoteRepo
 import com.manipur.khannasi.service.PostDiscussionVoteService
 import com.manipur.khannasi.util.BackFunction.Companion.onBackButtonClicked
 import com.manipur.khannasi.util.LoadingSpinner
+import com.manipur.khannasi.util.RetryHelper
 import com.manipur.khannasi.util.SharedPreferencesRetriever
 import com.manipur.khannasi.util.SharedViewModel
 import com.manipur.khannasi.util.SpannedHtmlString.Companion.fromHtml
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 class FragmentFullContentDiscussion : Fragment(), EditorVisibilityCallback, PostDiscussionWithEditor {
 
@@ -53,6 +58,7 @@ class FragmentFullContentDiscussion : Fragment(), EditorVisibilityCallback, Post
     var discussionId: Long = 0
     var replyToCommentId = 0L
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -86,23 +92,51 @@ class FragmentFullContentDiscussion : Fragment(), EditorVisibilityCallback, Post
         commentsRecyclerView.layoutManager = LinearLayoutManager(context)
 
         val discussionCommentRepository = DiscussionCommentRepository()
-        discussionCommentRepository.getCommentsByDiscussionId(discussionIdFromItem) { comments ->
-            if (comments != null) {
-                sharedViewModel.retrievedDiscussionComments.value = comments
-                currentDiscussionCommentsList = comments
-                Log.d("DiscussionComments", currentDiscussionCommentsList.toString())
-                commentsAdapter = DiscussionCommentAdapter(requireContext(), userBasics, comments, onReplyClick = { comment ->
+        val retryHelper = RetryHelper(
+            maxRetries = 3,
+            initialDelay = 1000L,
+            maxDelay = 3000L,
+            factor = 2.0
+        )
+
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            val commentsToDisplay = retryHelper.retry {
+                suspendCancellableCoroutine { continuation ->
+                    discussionCommentRepository.getCommentsByDiscussionId(discussionId) { comments ->
+                        if (comments != null) {
+                            continuation.resume(comments, null)
+                        } else {
+                            continuation.resume(null, null)
+                        }
+                    }
+                }
+            } ?: emptyList()
+            sharedViewModel.retrievedDiscussionComments.value = commentsToDisplay
+            currentDiscussionCommentsList = commentsToDisplay
+            Log.d("DiscussionComments", currentDiscussionCommentsList.toString())
+            commentsAdapter =
+                DiscussionCommentAdapter(requireContext(), userBasics, commentsToDisplay, onReplyClick = { comment ->
                     showEditor(comment.commentId)
                 }, onLikeClick = { discussionIdToUpdate, commentId, liked ->
                     Log.d("DiscussionFeedFragment", "Liking discussion $commentId")
                     run {
                         if (liked) {
                             PostDiscussionVoteService.postDiscussionVote(
-                                discussionIdToUpdate, commentId, LIKE, userBasics, discussionVoteRepo, this
+                                discussionIdToUpdate,
+                                commentId,
+                                LIKE,
+                                userBasics,
+                                discussionVoteRepo,
+                                this@FragmentFullContentDiscussion
                             )
                         } else {
                             PostDiscussionVoteService.postDiscussionVote(
-                                discussionIdToUpdate, commentId, NONE, userBasics, discussionVoteRepo, this
+                                discussionIdToUpdate,
+                                commentId,
+                                NONE,
+                                userBasics,
+                                discussionVoteRepo,
+                                this@FragmentFullContentDiscussion
                             )
                         }
                     }
@@ -112,21 +146,30 @@ class FragmentFullContentDiscussion : Fragment(), EditorVisibilityCallback, Post
                         if (disliked) {
                             Log.d("DiscussionFeedFragment", "Disliking discussion")
                             PostDiscussionVoteService.postDiscussionVote(
-                                discussionIdToUpdate, commentId, DISLIKE, userBasics, discussionVoteRepo, this
+                                discussionIdToUpdate,
+                                commentId,
+                                DISLIKE,
+                                userBasics,
+                                discussionVoteRepo,
+                                this@FragmentFullContentDiscussion
                             )
                         } else {
                             PostDiscussionVoteService.postDiscussionVote(
-                                discussionIdToUpdate, commentId, NONE, userBasics, discussionVoteRepo, this
+                                discussionIdToUpdate,
+                                commentId,
+                                NONE,
+                                userBasics,
+                                discussionVoteRepo,
+                                this@FragmentFullContentDiscussion
                             )
                         }
                     }
                     true
                 }, CoroutineScope(Dispatchers.Main)
                 )
-                commentsRecyclerView.adapter = commentsAdapter
+            commentsRecyclerView.adapter = commentsAdapter
 
-            }
-            Log.d("DiscussionFeedFragment", "Comments: $comments")
+            Log.d("DiscussionFeedFragment", "Comments: $commentsToDisplay")
         }
         addCommentButton = view.findViewById(R.id.add_comment_button)
         commentButtons = view.findViewById(R.id.comment_buttons)
@@ -192,37 +235,43 @@ class FragmentFullContentDiscussion : Fragment(), EditorVisibilityCallback, Post
 
                 // Refresh the adapter with the new list of comments
                 commentsAdapter =
-                    DiscussionCommentAdapter(requireContext(), userBasics, currentDiscussionCommentsList, onReplyClick = { comment ->
-                        showEditor(comment.commentId)
-                    }, onLikeClick = { discussionIdToUpdate, commentId, liked ->
-                        run {
-                            if (liked) {
-                                Log.d("DiscussionFeedFragment", "Liking discussion")
-                                PostDiscussionVoteService.postDiscussionVote(
-                                    discussionIdToUpdate, commentId, LIKE, userBasics, discussionVoteRepo, this
-                                )
-                            } else {
-                                PostDiscussionVoteService.postDiscussionVote(
-                                    discussionIdToUpdate, commentId, NONE, userBasics, discussionVoteRepo, this
-                                )
+                    DiscussionCommentAdapter(requireContext(),
+                        userBasics,
+                        currentDiscussionCommentsList,
+                        onReplyClick = { comment ->
+                            showEditor(comment.commentId)
+                        },
+                        onLikeClick = { discussionIdToUpdate, commentId, liked ->
+                            run {
+                                if (liked) {
+                                    Log.d("DiscussionFeedFragment", "Liking discussion")
+                                    PostDiscussionVoteService.postDiscussionVote(
+                                        discussionIdToUpdate, commentId, LIKE, userBasics, discussionVoteRepo, this
+                                    )
+                                } else {
+                                    PostDiscussionVoteService.postDiscussionVote(
+                                        discussionIdToUpdate, commentId, NONE, userBasics, discussionVoteRepo, this
+                                    )
+                                }
                             }
-                        }
-                        true
-                    }, onDislikeClick = { discussionIdToUpdate, commentId, disliked ->
-                        run {
-                            if (disliked) {
-                                Log.d("DiscussionFeedFragment", "Disliking discussion")
-                                PostDiscussionVoteService.postDiscussionVote(
-                                    discussionIdToUpdate, commentId, DISLIKE, userBasics, discussionVoteRepo, this
-                                )
-                            } else {
-                                PostDiscussionVoteService.postDiscussionVote(
-                                    discussionIdToUpdate, commentId, NONE, userBasics, discussionVoteRepo, this
-                                )
+                            true
+                        },
+                        onDislikeClick = { discussionIdToUpdate, commentId, disliked ->
+                            run {
+                                if (disliked) {
+                                    Log.d("DiscussionFeedFragment", "Disliking discussion")
+                                    PostDiscussionVoteService.postDiscussionVote(
+                                        discussionIdToUpdate, commentId, DISLIKE, userBasics, discussionVoteRepo, this
+                                    )
+                                } else {
+                                    PostDiscussionVoteService.postDiscussionVote(
+                                        discussionIdToUpdate, commentId, NONE, userBasics, discussionVoteRepo, this
+                                    )
+                                }
                             }
-                        }
-                        true
-                    }, CoroutineScope(Dispatchers.Main)
+                            true
+                        },
+                        CoroutineScope(Dispatchers.Main)
                     )
                 commentsRecyclerView.adapter = commentsAdapter
             }
