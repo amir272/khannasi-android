@@ -40,4 +40,12 @@
     <string name="sub_categories">Sub categories</string>
     <string name="published_date">"Published date: "</string>
     <string name="put_just_value">%1$s</string>
+    <string name="set_image_for_the_post">Set image for the post</string>
+    <string name="add_a_comment">Add a comment</string>
+    <string name="cancel">Cancel</string>
+    <string name="show_replies">Show replies</string>
+    <string name="hide_replies">Hide replies</string>
+    <string name="reply">Reply</string>
+    <string name="follow">Follow</string>
+    <string name="following">Following</string>
 </resources>

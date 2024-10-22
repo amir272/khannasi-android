@@ -69,4 +69,17 @@ class ArticleCommentRepository {
             }
         })
     }
+
+
+    fun getCommentsByArticleId(articleId: Long, onResult: (List<ArticleComment>?) -> Unit) {
+        apiService.getCommentsByArticleId(articleId).enqueue(object : Callback<List<ArticleComment>> {
+            override fun onResponse(call: Call<List<ArticleComment>>, response: Response<List<ArticleComment>>) {
+                onResult(response.body())
+            }
+
+            override fun onFailure(call: Call<List<ArticleComment>>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
 }

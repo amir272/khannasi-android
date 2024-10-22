@@ -69,4 +69,16 @@ class DiscussionCommentRepository {
             }
         })
     }
+
+    fun getCommentsByDiscussionId(discussionId: Long, onResult: (List<DiscussionComment>?) -> Unit) {
+        apiService.getCommentsByDiscussionId(discussionId).enqueue(object : Callback<List<DiscussionComment>> {
+            override fun onResponse(call: Call<List<DiscussionComment>>, response: Response<List<DiscussionComment>>) {
+                onResult(response.body())
+            }
+
+            override fun onFailure(call: Call<List<DiscussionComment>>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
 }

@@ -57,20 +57,24 @@ interface ApiService {
     fun deleteUserBasics(@Path("id") id: Long): Call<Void>
 
     // ArticleCommentController
-    @GET("api/comments")
+    @GET("api/article-comments")
     fun getAllArticleComments(): Call<List<ArticleComment>>
 
-    @GET("api/comments/{id}")
+    @GET("api/article-comments/{id}")
     fun getArticleCommentById(@Path("id") id: Long): Call<ArticleComment>
 
-    @POST("api/comments")
+    @POST("api/article-comments")
     fun postArticleComment(@Body comment: ArticleComment): Call<ArticleComment>
 
-    @PUT("api/comments/{id}")
+    @PUT("api/article-comments/{id}")
     fun putArticleComment(@Path("id") id: Long, @Body comment: ArticleComment): Call<ArticleComment>
 
-    @DELETE("api/comments/{id}")
+    @DELETE("api/article-comments/{id}")
     fun deleteArticleComment(@Path("id") id: Long): Call<Void>
+
+    @GET("api/article-comments/article/{articleId}")
+    fun getCommentsByArticleId(@Path("articleId") articleId: Long): Call<List<ArticleComment>>
+
 
     // ArticleController
     @GET("api/articles")
@@ -120,6 +124,9 @@ interface ApiService {
     @DELETE("api/discussion-comments/{id}")
     fun deleteDiscussionComment(@Path("id") id: Long): Call<Void>
 
+    @GET("api/discussion-comments/discussion/{discussionId}")
+    fun getCommentsByDiscussionId(@Path("discussionId") discussionId: Long): Call<List<DiscussionComment>>
+
     // DiscussionController
     @GET("api/discussions")
     fun getAllDiscussions(): Call<List<Discussion>>
@@ -157,5 +164,11 @@ interface ApiService {
 
     @DELETE("api/articles-bookmark/{articleId}/user/{userId}")
     fun removeBookmark(@Path("articleId") articleId: Long, @Path("userId") userId: Long): Call<Void>
+
+    @POST("api/discussions-bookmark")
+    fun bookmarkDiscussion(@Body bookmark: DiscussionBookmark): Call<DiscussionBookmark>
+
+    @DELETE("api/discussions-bookmark/{discussionId}/user/{userId}")
+    fun removeDiscussionBookmark(@Path("discussionId") discussionId: Long, @Path("userId") userId: Long): Call<Void>
 
 }

@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.manipur.khannasi.fragment.SignInFragment
-import com.manipur.khannasi.misc.LoggedInCheck
+import com.manipur.khannasi.util.LoggedInCheck
 
 class HomeActivity : AppCompatActivity() {
 

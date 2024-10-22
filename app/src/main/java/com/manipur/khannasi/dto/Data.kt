@@ -4,13 +4,6 @@ import android.graphics.drawable.Drawable
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
-
-data class Item(
-    val id: Long = 0,
-    var text: String = "",
-    var image: Drawable? = null
-)
-
 data class UserBasics(
     val userId: Long = 0,
     val firstName: String = "",
@@ -43,11 +36,9 @@ data class Article(
     val subCategories: String = "",
     val languageType: String = "",
     val representativePicture: String? = null,
-    val comments: List<ArticleComment>? = null,
     val likeCount: Int = 0,
     val dislikeCount: Int = 0,
     val bookmarkCount: Int = 0
-
 )
 
 data class ArticleBookmark(
@@ -64,8 +55,11 @@ data class ArticleComment(
     val content: String = "",
     val timestamp: String? = null,
     val replyTo: Long = 0,
-    val deleted: Boolean = false
-)
+    val level: Int = 0,
+    val deleted: Boolean = false,
+    val likeCount: Int = 0,
+    val dislikeCount: Int = 0
+    )
 
 data class ArticleVote(
     val voteId: Long = 0,
@@ -85,8 +79,17 @@ data class Discussion(
     val mainCategory: String = "",
     val subCategories: String = "",
     val languageType: String = "",
-    val representativePicture: String? = null
+    val representativePicture: String? = null,
+    val bookmarkCount: Int = 0
 )
+
+data class DiscussionBookmark(
+    val bookmarkId: Long = 0,
+    val discussionId: Long,
+    val user: UserBasics,
+    val createdAt: String? = null
+)
+
 
 data class DiscussionComment(
     val commentId: Long = 0,
@@ -95,7 +98,10 @@ data class DiscussionComment(
     val content: String = "",
     val timestamp: String? = null,
     val replyTo: Long = 0,
-    val deleted: Boolean = false
+    val level: Int = 0,
+    val deleted: Boolean = false,
+    val likeCount: Int = 0,
+    val dislikeCount: Int = 0
 )
 
 data class DiscussionVote(

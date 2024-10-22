@@ -10,8 +10,8 @@ import com.manipur.khannasi.HomeActivity
 import com.manipur.khannasi.R
 import com.manipur.khannasi.databinding.FragmentUserDetailsBinding
 import com.manipur.khannasi.dto.UserDetails
-import com.manipur.khannasi.misc.LoadingSpinner.Companion.showLoadingSpinner
-import com.manipur.khannasi.misc.RetrieveDetailsFromSharedPreferences
+import com.manipur.khannasi.util.LoadingSpinner.Companion.showLoadingSpinner
+import com.manipur.khannasi.util.SharedPreferencesRetriever
 
 class UserDetailsFragment : Fragment() {
 
@@ -32,7 +32,7 @@ class UserDetailsFragment : Fragment() {
         val context = requireContext()
 
         val userDetails: UserDetails? =
-            RetrieveDetailsFromSharedPreferences.getDetails<UserDetails>(requireContext(), "UserDetails")
+            SharedPreferencesRetriever.getDetails<UserDetails>(requireContext(), "UserDetails")
         userDetails?.let {
             binding.firstName.text = context.getString(R.string.first_name_value, it.userBasics.firstName)
             binding.lastName.text = context.getString(R.string.last_name_value, it.userBasics.lastName)

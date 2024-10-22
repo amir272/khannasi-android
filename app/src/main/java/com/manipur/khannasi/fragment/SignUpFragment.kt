@@ -8,14 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.manipur.khannasi.MainActivity
 import com.manipur.khannasi.databinding.LayoutSignUpBinding
 import com.manipur.khannasi.dto.UserBasics
 import com.manipur.khannasi.dto.UserDetails
-import com.manipur.khannasi.misc.RetrieveDetailsFromSharedPreferences
+import com.manipur.khannasi.util.SharedPreferencesRetriever
 import com.manipur.khannasi.repository.UserDetailsRepository
 
 class SignUpFragment : Fragment() {
@@ -81,7 +80,7 @@ class SignUpFragment : Fragment() {
                         editor?.apply()
 
                         val savedUserDetails: UserDetails? =
-                            RetrieveDetailsFromSharedPreferences.getDetails<UserDetails>(requireContext(), "UserDetails")
+                            SharedPreferencesRetriever.getDetails<UserDetails>(requireContext(), "UserDetails")
                         Log.d("SignUpFragment", "onViewCreated: $savedUserDetails")
 
                         if(savedUserDetails != null) {

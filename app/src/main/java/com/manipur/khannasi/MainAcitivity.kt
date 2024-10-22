@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = "HiMayam"
         supportActionBar?.elevation = 7f
         supportActionBar?.subtitle = "Manipuri news and discussion"
-        supportActionBar?.setIcon(R.drawable.himayam_logo)
+        supportActionBar?.setIcon(R.drawable.mani)
 
         toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.grey_50))
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitleText)
@@ -26,10 +26,11 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
             when (item.itemId) {
-                R.id.navigation_home -> selectedFragment = HomeFragment()
-                R.id.navigation_discussion -> selectedFragment = EditorFragment()
+                R.id.navigation_home -> selectedFragment = ArticleFeedFragment()
+                R.id.discussion_feed -> selectedFragment = DiscussionFeedFragment()
+                R.id.navigation_discussion -> selectedFragment = PostArticleFragment()
+                R.id.navigation_test -> selectedFragment = PostDiscussionFragment()
                 R.id.navigation_account -> selectedFragment = UserDetailsFragment()
-                R.id.navigation_test -> selectedFragment = UserDetailsFragment()
             }
             if (selectedFragment != null) {
                 supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainer, selectedFragment).commit()
